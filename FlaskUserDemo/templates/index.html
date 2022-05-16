@@ -1,0 +1,13 @@
+{% extends '_layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>WELCOME, TRAVELER</h1>
+<br>
+{% if session['role'] == 'admin' %}
+<a href="{{ url_for('dashboard') }}">View All Users</a>
+{% elif 'logged_in' in session %}
+<a href="/view?id={{ session['id'] }}">View Profile</a>
+{% endif %}
+{% endblock %}

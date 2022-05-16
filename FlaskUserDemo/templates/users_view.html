@@ -1,0 +1,24 @@
+{% extends '_layout.html' %}
+
+{% block title %}View profile{% endblock %}
+
+{% block content %}
+<h1>{{ result.first_name }} {{ result.last_name }}</h1>
+
+<p><a href="mailto:{{ result.email }}">{{ result.email }}</a></p>
+
+<img id="pfp" src="{{ url_for('static', filename='images/' + (result.avatar or 'default.png')) }}">
+
+<p>
+    <a href="/edit?id={{ result.id }}">Edit</a>
+    {% if session['role'] == 'admin' or session.id == result.id %}
+    <a href="/delete?id={{ result.id }}">Delete</a>
+    {% endif %}
+</p>
+{% if session['role'] == 'admin' %}
+<p>
+    <a href="{{ url_for('dashboard') }}">Back to dashboard</a>
+</p>
+{% endif %}
+
+{% endblock %}

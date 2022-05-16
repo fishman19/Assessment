@@ -33,12 +33,21 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="static\css\custom.css" />
     <Content Include="static\images\default.png" />
+    <Content Include="templates\index.html" />
+    <Content Include="templates\login.html" />
     <Content Include="templates\setup.html" />
+    <Content Include="templates\users_add.html" />
+    <Content Include="templates\users_edit.html" />
+    <Content Include="templates\users_list.html" />
+    <Content Include="templates\users_view.html" />
+    <Content Include="templates\_layout.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="static\" />
     <Folder Include="static\images\" />
+    <Folder Include="static\css\" />
     <Folder Include="templates\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />

@@ -1,0 +1,60 @@
+body {
+    background-color: black;
+    font-family: Cambria;
+    color: white;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    margin: auto;
+    width: 50%;
+    margin-bottom: 2%;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+tr {
+    background-color: darkgray;
+    color: black;
+}
+
+tr:nth-child(2n) {
+    background-color: lightgray;
+    color: black;
+}
+
+img {
+    border-radius: 50%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+a {
+    color: white;
+    transition: ease-in-out;
+    transition-duration: 0.25s;
+    text-decoration: none;
+}
+
+a:hover {
+    color: cornflowerblue;
+}
+
+input, select {
+    margin-bottom: 10px;
+}
+
+#pfp {
+    border-radius: 50%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    height: 200px;
+}
+
+nav {
+    background-color: darkgray;
+    margin-bottom: 2%;
+}

@@ -1,0 +1,27 @@
+{% extends '_layout.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    {% for row in result %}
+    <tr>
+        <td>{{ row.first_name }}</td>
+        <td>{{ row.last_name }}</td>
+        <td>{{ row.email }}</td>
+        <td>
+            <a href="/view?id={{ row.id }}">View</a>
+            <a href="/edit?id={{ row.id }}">Edit</a>
+            <a href="/delete?id={{ row.id }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('add_user') }}">Add a new user</a>
+{% endblock %}
