@@ -38,7 +38,7 @@ def login():
             else:
                 return redirect('/')
         else:
-            lmao = ['You shall not pass!', 'Wrong lol', 'Try again idiot', 'You did an oopsie', 'Your utter stupidity surprises me' # female dog-made little runt
+            lmao = ['You shall not pass!', 'Wrong lol', 'Try again idiot', 'You did an oopsie', 'Your utter stupidity surprises me'
                     ]
             flash(lmao[random.randint(0, len(lmao) - 1)])
             return redirect("/login")
