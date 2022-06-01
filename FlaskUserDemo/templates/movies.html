@@ -1,0 +1,42 @@
+{% extends '_layout.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Genre</th>
+        <th>Year</th>
+        <th colspan="3">Actions</th>
+    </tr>
+    {% for row in result %}
+    <tr>
+        <td>{{ row.title }}</td>
+        <td>{{ row.genre }}</td>
+        <td>{{ row.year_released }}</td>
+        {% if session['logged_in'] == True %}
+        <td>
+            <a href="/borrow?id={{ row.id }}">Borrow</a>
+        </td>
+        <td>
+            <a href="/delete-movie?id={{ row.id }}">Delete</a>
+        </td>
+        {% endif %}
+        <td>
+            <a href="https://www.youtube.com/watch?v=xNIM453_dgg" target="_blank">Trailer</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="99">
+            <a href="/add_movie">Add new movie</a>
+        </td>
+    </tr>
+</table>
+{% if session['logged_in'] == True %}
+<a href="/watched">Movies Watched</a>
+{% endif %}
+<br>
+<a href="/">Return to home</a>
+{% endblock %}

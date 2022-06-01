@@ -8,7 +8,7 @@ app.register_blueprint(setup)
 
 @app.before_request
 def restrict():
-    restricted_pages = ['dashboard', 'view_user', 'edit', 'delete']
+    restricted_pages = ['dashboard', 'view_user', 'edit', 'delete', 'watched', 'add_movie']
     if 'logged_in' not in session and request.endpoint in restricted_pages:
         flash("Sorry, you aren't logged in.")
         return redirect('/login')
@@ -173,6 +173,64 @@ def check_email():
             return jsonify({ 'status': 'Taken' })
         else:
             return jsonify({ 'status': 'OK' })
+
+@app.route('/movies')
+def movies():
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM movies")
+            result = cursor.fetchall()
+    return render_template('movies.html', result=result)
+
+@app.route('/borrow')
+def borrow():
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO users_movies (user_id, movie_id) VALUES (%s, %s)"
+            values = (session['id'], request.args['id'])
+            cursor.execute(sql, values)
+            connection.commit()
+    return redirect('/watched')
+
+@app.route('/watched')
+def watched():
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            sql = ("""SELECT users.first_name, users.last_name, movies.title FROM users
+            JOIN users_movies ON users_movies.user_id = users.id
+            JOIN movies ON movies.id = users_movies.movie_id
+            WHERE users.id = %s;""")
+            values = (session['id'])
+            cursor.execute(sql, values)
+            result = cursor.fetchall()
+    return render_template('watched.html', result=result)
+
+@app.route('/delete-movie')
+def delete_movie():
+    if session['role'] != 'admin' and str(session['id']) != request.args['id']:
+        return abort(404)
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            sql = "DELETE FROM movies WHERE id = %s"
+            values = (request.args['id'])
+            cursor.execute(sql, values)
+            connection.commit()
+    if str(session['id']) == request.args['id']:
+        session.clear()
+        return redirect('/')
+    else:
+        return redirect('/watched')
+
+@app.route('/add_movie')
+def add_movie():
+    with create_connection() as connection:
+            with connection.cursor() as cursor:
+                sql = 'INSERT INTO movies (title, genre, year_released) VALUES (%s, %s, %s)'
+                values = (request.form['title'], request.form['genre'], request.form['year_released'])
+                cursor.execute(sql, values)
+                result = cursor.fetchone()
+            return redirect('movies')
+    return render_template('movies_add.html')
 
 if __name__ == '__main__':
     import os

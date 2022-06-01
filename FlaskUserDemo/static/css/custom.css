@@ -33,7 +33,7 @@ img {
 }
 
 a {
-    color: white;
+    color: orangered;
     transition: ease-in-out;
     transition-duration: 0.25s;
     text-decoration: none;

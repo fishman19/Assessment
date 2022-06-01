@@ -1,0 +1,18 @@
+{% extends '_layout.html' %}
+
+{% block title %}Add New Movie{% endblock %}
+
+{% block content %}
+<form method="post">
+    <label for="title">Title</label>
+    <input id="title" name="title">
+    <br>
+    <label for="genre">Genre</label>
+    <input id="genre" name="genre">
+    <br>
+    <label for="year">Year Released</label>
+    <input id="year" name="year">
+    <br>
+    <input type="submit" value="Add Movie">
+</form>
+{% endblock %}
