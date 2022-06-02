@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}List of Movies{% endblock %}
 
 {% block content %}
 <table>
@@ -20,7 +20,7 @@
             <a href="/borrow?id={{ row.id }}">Borrow</a>
         </td>
         <td>
-            <a href="/delete-movie?id={{ row.id }}">Delete</a>
+            <a href="/delete_movie?id={{ row.id }}">Delete</a>
         </td>
         {% endif %}
         <td>

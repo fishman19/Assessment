@@ -5,13 +5,22 @@
 {% block content %}
 <table>
     {% if result|length == 0 %}
-    Hey! You have not watched any movies yet. Click <a href="/movies">here</a> to find movies.
+    Nobody has watched any movies yet. Click
+    <a href="/movies">here</a> to find movies.
     {% else %}
     <tr>
-        <th>Movies Watched</th>
+        <th>User ID</th>
+        <th>User Name</th>
+        <th>Movie Title</th>
     </tr>
     {% for row in result %}
     <tr>
+        <td>
+            {{ row.id }}
+        </td>
+        <td>
+            {{ row.first_name }}
+        </td>
         <td>
             {{ row.title }}
         </td>

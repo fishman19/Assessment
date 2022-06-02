@@ -205,7 +205,7 @@ def watched():
             result = cursor.fetchall()
     return render_template('watched.html', result=result)
 
-@app.route('/delete-movie')
+@app.route('/delete_movie')
 def delete_movie():
     if session['role'] != 'admin' and str(session['id']) != request.args['id']:
         return abort(404)
@@ -231,6 +231,18 @@ def add_movie():
                 result = cursor.fetchone()
             return redirect('movies')
     return render_template('movies_add.html')
+
+@app.route('/watched_admin')
+def admin_movies():
+    if session['logged_in'] != True or session['role'] != 'admin':
+        return abort(404)
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("""SELECT users.id, users.first_name, movies.title FROM users
+            JOIN users_movies ON users_movies.user_id = users.id
+            JOIN movies ON movies.id = users_movies.movie_id""")
+            result = cursor.fetchall()
+    return render_template('watched_admin.html', result=result)
 
 if __name__ == '__main__':
     import os

@@ -45,6 +45,7 @@
     <Content Include="templates\users_list.html" />
     <Content Include="templates\users_view.html" />
     <Content Include="templates\watched.html" />
+    <Content Include="templates\watched_admin.html" />
     <Content Include="templates\_layout.html" />
   </ItemGroup>
   <ItemGroup>
