@@ -4,7 +4,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9cfa8346-3ab1-42dd-8b03-40eb34d53348</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
+    <ProjectHome>
+    </ProjectHome>
     <ProjectTypeGuids>{789894c7-04a9-4a11-a6b5-3f4435165112};{1b580a1a-fdb3-4b32-83e1-6407eb2722e6};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <StartupFile>app.py</StartupFile>
     <SearchPath>
@@ -14,7 +15,7 @@
     <WebBrowserUrl>http://localhost</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
-    <Name>FlaskUserDemo</Name>
+    <Name>ZaidAssessment</Name>
     <RootNamespace>FlaskUserDemo</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -37,15 +38,15 @@
     <Content Include="static\images\default.png" />
     <Content Include="templates\index.html" />
     <Content Include="templates\login.html" />
-    <Content Include="templates\movies.html" />
-    <Content Include="templates\movies_add.html" />
+    <Content Include="templates\subjects.html" />
+    <Content Include="templates\subjects_add.html" />
     <Content Include="templates\setup.html" />
     <Content Include="templates\users_add.html" />
     <Content Include="templates\users_edit.html" />
     <Content Include="templates\users_list.html" />
     <Content Include="templates\users_view.html" />
-    <Content Include="templates\watched.html" />
-    <Content Include="templates\watched_admin.html" />
+    <Content Include="templates\selected.html" />
+    <Content Include="templates\admin_subjects.html" />
     <Content Include="templates\_layout.html" />
   </ItemGroup>
   <ItemGroup>

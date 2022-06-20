@@ -8,7 +8,7 @@ app.register_blueprint(setup)
 
 @app.before_request
 def restrict():
-    restricted_pages = ['dashboard', 'view_user', 'edit', 'delete', 'watched', 'add_movie']
+    restricted_pages = ['dashboard', 'view_user', 'edit', 'delete', 'selected', 'add_subject']
     if 'logged_in' not in session and request.endpoint in restricted_pages:
         flash("Sorry, you aren't logged in.")
         return redirect('/login')
@@ -38,9 +38,7 @@ def login():
             else:
                 return redirect('/')
         else:
-            lmao = ['You shall not pass!', 'Wrong lol', 'Try again idiot', 'You did an oopsie', 'Your utter stupidity surprises me'
-                    ]
-            flash(lmao[random.randint(0, len(lmao) - 1)])
+            flash('Sorry! Your username or password information was wrong. Please try again or sign up if you do not have an account.')
             return redirect("/login")
     else:
         return render_template('login.html')
@@ -64,8 +62,8 @@ def add_user():
             avatar_filename = None
         with create_connection() as connection:
             with connection.cursor() as cursor:
-                sql = 'INSERT INTO users (first_name, last_name, email, password, avatar) VALUES (%s, %s, %s, %s, %s)'
-                values = (request.form['first_name'], request.form['last_name'], request.form['email'], encrypted_password, avatar_filename)
+                sql = 'INSERT INTO users (first_name, last_name, core_class, email, password, avatar) VALUES (%s, %s, %s, %s, %s, %s)'
+                values = (request.form['first_name'], request.form['last_name'], request.form['class'], request.form['email'], encrypted_password, avatar_filename)
                 try:
                     cursor.execute(sql, values)
                     connection.commit()
@@ -121,7 +119,7 @@ def delete():
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
     if session['role'] != 'admin' and str(session['id']) != request.args['id']:
-        flash("Sorry, you don't have permission to edit this user")
+        flash("Sorry, you don't have permission to edit this user.")
         return redirect('/view?id=' + request.args['id'])
     if request.method == 'POST':
         if request.files['avatar'].filename:
@@ -141,11 +139,11 @@ def edit():
                 if request.form['password']:
                     password = request.form['password']
                     encrypted_password = hashlib.sha256(password.encode()).hexdigest()
-                    sql = "UPDATE users SET first_name = %s, last_name = %s, email = %s, password = %s, avatar = %s WHERE id = %s"
-                    values = (request.form['first_name'], request.form['last_name'], request.form['email'], encrypted_password, avatar_filename, request.form['id'])
+                    sql = "UPDATE users SET first_name = %s, last_name = %s, core_class = %s, email = %s, password = %s, avatar = %s WHERE id = %s"
+                    values = (request.form['first_name'], request.form['last_name'], request.form['core_class'], request.form['email'], encrypted_password, avatar_filename, request.form['id'])
                 else:
-                    sql = "UPDATE users SET first_name = %s, last_name = %s, email = %s, avatar = %s WHERE id = %s"
-                    values = (request.form['first_name'], request.form['last_name'], request.form['email'], avatar_filename, request.form['id'])
+                    sql = "UPDATE users SET first_name = %s, last_name = %s, core_class = %s, email = %s, avatar = %s WHERE id = %s"
+                    values = (request.form['first_name'], request.form['last_name'], request.form['core_class'], request.form['email'], avatar_filename, request.form['id'])
                 cursor.execute(sql, values)
                 connection.commit()
         if session['role'] == 'admin':
@@ -161,7 +159,7 @@ def edit():
                 result = cursor.fetchone()
         return render_template('users_edit.html', result=result)
 
-@app.route('/checkemail')
+@app.route('/check_email')
 def check_email():
     with create_connection() as connection:
         with connection.cursor() as cursor:
@@ -173,45 +171,44 @@ def check_email():
             return jsonify({ 'status': 'Taken' })
         else:
             return jsonify({ 'status': 'OK' })
-
-@app.route('/movies')
-def movies():
+@app.route('/subjects')
+def subjects():
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM movies")
+            cursor.execute("SELECT * FROM subjects")
             result = cursor.fetchall()
-    return render_template('movies.html', result=result)
+    return render_template('subjects.html', result=result)
 
-@app.route('/borrow')
-def borrow():
+@app.route('/select')
+def select():
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO users_movies (user_id, movie_id) VALUES (%s, %s)"
+            sql = "INSERT INTO selected (student_id, subject_id) VALUES (%s, %s)"
             values = (session['id'], request.args['id'])
             cursor.execute(sql, values)
             connection.commit()
-    return redirect('/watched')
+    return redirect('/selected')
 
-@app.route('/watched')
-def watched():
+@app.route('/selected')
+def selected():
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            sql = ("""SELECT users.first_name, users.last_name, movies.title FROM users
-            JOIN users_movies ON users_movies.user_id = users.id
-            JOIN movies ON movies.id = users_movies.movie_id
+            sql = ("""SELECT users.first_name, users.last_name, subjects.name, subjects.year_level, FROM users
+            JOIN selected ON selected.student_id = users.id
+            JOIN subjects ON subjects.id = selected.subject_id
             WHERE users.id = %s;""")
             values = (session['id'])
             cursor.execute(sql, values)
             result = cursor.fetchall()
-    return render_template('watched.html', result=result)
+    return render_template('selected.html', result=result)
 
-@app.route('/delete_movie')
-def delete_movie():
+@app.route('/delete_subject')
+def delete_subject():
     if session['role'] != 'admin' and str(session['id']) != request.args['id']:
         return abort(404)
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            sql = "DELETE FROM movies WHERE id = %s"
+            sql = "DELETE FROM subjects WHERE id = %s"
             values = (request.args['id'])
             cursor.execute(sql, values)
             connection.commit()
@@ -219,30 +216,32 @@ def delete_movie():
         session.clear()
         return redirect('/')
     else:
-        return redirect('/watched')
+        return redirect('/selected')
 
-@app.route('/add_movie')
-def add_movie():
+@app.route('/add_subject')
+def add_subject():
     with create_connection() as connection:
             with connection.cursor() as cursor:
-                sql = 'INSERT INTO movies (title, genre, year_released) VALUES (%s, %s, %s)'
-                values = (request.form['title'], request.form['genre'], request.form['year_released'])
+                sql = 'INSERT INTO subjects (name, year_level, HOF) VALUES (%s, %s, %s)'
+                values = (request.form['name'], request.form['year_level'], request.form['HOF'])
                 cursor.execute(sql, values)
                 result = cursor.fetchone()
-            return redirect('movies')
-    return render_template('movies_add.html')
+            return redirect('subjects')
+    return render_template('subjects_add.html')
 
-@app.route('/watched_admin')
-def admin_movies():
+@app.route('/admin_subjects')
+def admin_subjects():
     if session['logged_in'] != True or session['role'] != 'admin':
         return abort(404)
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("""SELECT users.id, users.first_name, movies.title FROM users
-            JOIN users_movies ON users_movies.user_id = users.id
-            JOIN movies ON movies.id = users_movies.movie_id""")
+            cursor.execute("""SELECT users.id, users.first_name, users.last_name, GROUP_CONCAT(subjects.name) FROM users
+            JOIN selected ON selected.student_id = users.id
+            JOIN subjects ON subjects.id = selected.subject_id
+            ORDER BY first_name""")
             result = cursor.fetchall()
-    return render_template('watched_admin.html', result=result)
+            print(result)
+    return render_template('admin_subjects.html', result=result)
 
 if __name__ == '__main__':
     import os

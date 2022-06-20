@@ -3,17 +3,17 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>FOUL TARNISHED, IN SEARCH OF THE ELDEN RING</h1>
+<h1>SEND WORD FAR AND WIDE. OF THE LAST QUEEN OF CARIA.</h1>
 <br>
-<a href="/movies">List of Movies</a>
+<a href="/subjects">Subject Selection</a>
 <br>
 {% if session['role'] == 'admin' %}
 <a href="{{ url_for('dashboard') }}">View All Users</a>
 <br>
-<a href="/watched_admin">learn their secrets</a>
+<a href="/admin_subjects">learn their secrets</a>
 {% elif 'logged_in' in session %}
 <a href="/view?id={{ session['id'] }}">View Profile</a>
 <br>
-<a href="/watched">Movies Watched</a>
+<a href="/selected">Subjects Selected</a>
 {% endif %}
 {% endblock %}

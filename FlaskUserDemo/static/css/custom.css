@@ -1,5 +1,5 @@
 body {
-    background-color: black;
+    background-color: #4368aa;
     font-family: Cambria;
     color: white;
     text-align: center;
@@ -10,6 +10,7 @@ table {
     margin: auto;
     width: 50%;
     margin-bottom: 2%;
+    color: white;
 }
 
 th, td {
@@ -17,13 +18,11 @@ th, td {
 }
 
 tr {
-    background-color: darkgray;
-    color: black;
+    background-color: #3a4450;
 }
 
 tr:nth-child(2n) {
-    background-color: lightgray;
-    color: black;
+    background-color: #1f2225;
 }
 
 img {
@@ -40,7 +39,7 @@ a {
 }
 
 a:hover {
-    color: cornflowerblue;
+    color: #3a4450;
 }
 
 input, select {
@@ -55,6 +54,6 @@ input, select {
 }
 
 nav {
-    background-color: darkgray;
+    background-color: #c59f6c;
     margin-bottom: 2%;
 }

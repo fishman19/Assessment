@@ -1,26 +1,30 @@
 {% extends '_layout.html' %}
 
-{% block title %}List of Movies{% endblock %}
+{% block title %}Subject Selection{% endblock %}
 
 {% block content %}
 <table>
     <tr>
-        <th>Title</th>
-        <th>Genre</th>
-        <th>Year</th>
+        <th>Name</th>
+        <th>Year Level</th>
+        <th>Faculty</th>
+        <th>HOF</th>
         <th colspan="3">Actions</th>
     </tr>
     {% for row in result %}
     <tr>
-        <td>{{ row.title }}</td>
-        <td>{{ row.genre }}</td>
-        <td>{{ row.year_released }}</td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.year_level }}</td>
+        <td>{{ row.faculty }}</td>
+        <td>{{ row.hof }}</td>
         {% if session['logged_in'] == True %}
         <td>
-            <a href="/borrow?id={{ row.id }}">Borrow</a>
-        </td>
+            <a href="/select?id={{ row.id }}">Select</a>
+        </td> 
+        {% endif %}
+        {% if session['role'] == 'admin' %}
         <td>
-            <a href="/delete_movie?id={{ row.id }}">Delete</a>
+            <a href="/delete_subject?id={{ row.id }}">Delete</a>
         </td>
         {% endif %}
         <td>
@@ -28,11 +32,13 @@
         </td>
     </tr>
     {% endfor %}
+    {% if session['role'] == 'admin' %}
     <tr>
         <td colspan="99">
-            <a href="/add_movie">Add new movie</a>
+            <a href="/add_subject">Add subject</a>
         </td>
     </tr>
+    {% endif %}
 </table>
 {% if session['logged_in'] == True %}
 <a href="/watched">Movies Watched</a>
