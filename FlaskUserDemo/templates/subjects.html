@@ -20,7 +20,7 @@
         {% if session['logged_in'] == True %}
         <td>
             <a href="/select?id={{ row.id }}">Select</a>
-        </td> 
+        </td>
         {% endif %}
         {% if session['role'] == 'admin' %}
         <td>
@@ -40,8 +40,10 @@
     </tr>
     {% endif %}
 </table>
-{% if session['logged_in'] == True %}
-<a href="/watched">Movies Watched</a>
+{% if session['role'] == 'admin' %}
+<a href="/admin_subjects">Student Selections</a>
+{% elif session['logged_in'] == True and session['role'] != 'admin' %}
+<a href="/selected">Subjects Selected</a>
 {% endif %}
 <br>
 <a href="/">Return to home</a>

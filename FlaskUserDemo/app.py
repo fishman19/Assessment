@@ -171,6 +171,7 @@ def check_email():
             return jsonify({ 'status': 'Taken' })
         else:
             return jsonify({ 'status': 'OK' })
+
 @app.route('/subjects')
 def subjects():
     with create_connection() as connection:
@@ -187,14 +188,14 @@ def select():
             values = (session['id'], request.args['id'])
             cursor.execute(sql, values)
             connection.commit()
-    return redirect('/selected')
+    return redirect('/subjects')
 
 @app.route('/selected')
 def selected():
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            sql = ("""SELECT users.first_name, users.last_name, subjects.name, subjects.year_level, FROM users
-            JOIN selected ON selected.student_id = users.id
+            sql = ("""SELECT users.first_name, users.last_name, subjects.name, subjects.year_level FROM selected
+            JOIN users ON selected.student_id = users.id
             JOIN subjects ON subjects.id = selected.subject_id
             WHERE users.id = %s;""")
             values = (session['id'])
@@ -204,7 +205,7 @@ def selected():
 
 @app.route('/delete_subject')
 def delete_subject():
-    if session['role'] != 'admin' and str(session['id']) != request.args['id']:
+    if session['role'] != 'admin':
         return abort(404)
     with create_connection() as connection:
         with connection.cursor() as cursor:
@@ -212,18 +213,28 @@ def delete_subject():
             values = (request.args['id'])
             cursor.execute(sql, values)
             connection.commit()
-    if str(session['id']) == request.args['id']:
-        session.clear()
-        return redirect('/')
-    else:
-        return redirect('/selected')
+    return redirect('/subjects')
+
+@app.route('/delete_selected')
+def delete_selected():
+    if str(session['id']) != request.args['id']:
+        return abort(404)
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            sql = "DELETE FROM selected WHERE id = %s"
+            values = (request.args['id'])
+            cursor.execute(sql, values)
+            connection.commit()
+    return redirect('/selected')
 
 @app.route('/add_subject')
 def add_subject():
+    if session['logged_in'] != True or session['role'] != 'admin':
+        return abort(404)
     with create_connection() as connection:
             with connection.cursor() as cursor:
-                sql = 'INSERT INTO subjects (name, year_level, HOF) VALUES (%s, %s, %s)'
-                values = (request.form['name'], request.form['year_level'], request.form['HOF'])
+                sql = 'INSERT INTO subjects (name, year_level, faculty, HOF) VALUES (%s, %s, %s, %s)'
+                values = (request.form['subject'], request.form['year'], request.form['faculty'], request.form['hof'])
                 cursor.execute(sql, values)
                 result = cursor.fetchone()
             return redirect('subjects')
@@ -235,10 +246,10 @@ def admin_subjects():
         return abort(404)
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("""SELECT users.id, users.first_name, users.last_name, GROUP_CONCAT(subjects.name) FROM users
-            JOIN selected ON selected.student_id = users.id
+            cursor.execute("""SELECT users.id, users.first_name, users.last_name, GROUP_CONCAT(subjects.name) FROM selected
+            JOIN users ON selected.student_id = users.id
             JOIN subjects ON subjects.id = selected.subject_id
-            ORDER BY first_name""")
+            GROUP BY users.id;""")
             result = cursor.fetchall()
             print(result)
     return render_template('admin_subjects.html', result=result)

@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}List of Users{% endblock %}
 
 {% block content %}
 <table>
@@ -25,7 +25,7 @@
 </table>
 <a href="{{ url_for('add_user') }}">Add a new user</a>
 <br>
-<a href="/movies">List of Movies</a>
+<a href="/subjects">List of Subjects</a>
 <br>
-<a href="/watched">Movies Watched</a>
+<a href="/admin_subjects">Student Subject Selections</a>
 {% endblock %}
