@@ -1,0 +1,24 @@
+{% extends '_layout.html' %}
+
+{% block title %}View Subject{% endblock %}
+
+{% block content %}
+<h1>{{ result[0].name }}</h1>
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+    </tr>
+    {% for row in result %}
+    <tr>
+        <td>{{ row.first_name }}</td>
+        <td>{{ row.last_name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="/edit_subject?id={{ result[0].subject_id }}">Edit</a>
+<br>
+<a href="/delete_subject?id={{ result[0].subject_id }}">Delete</a>
+<br>
+<a href="/">Return to Home</a>
+{% endblock %}

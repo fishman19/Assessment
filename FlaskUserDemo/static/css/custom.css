@@ -1,5 +1,5 @@
 body {
-    background-color: #4368aa;
+    background-color: #3a4450;
     font-family: Cambria;
     color: white;
     text-align: center;
@@ -39,7 +39,7 @@ a {
 }
 
 a:hover {
-    color: #3a4450;
+    color: white;
 }
 
 input, select {
@@ -54,6 +54,6 @@ input, select {
 }
 
 nav {
-    background-color: #c59f6c;
+    background-color: #1f2225;
     margin-bottom: 2%;
 }

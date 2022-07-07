@@ -41,12 +41,14 @@
     <Content Include="templates\subjects.html" />
     <Content Include="templates\subjects_add.html" />
     <Content Include="templates\setup.html" />
+    <Content Include="templates\subjects_edit.html" />
+    <Content Include="templates\subjects_view.html" />
     <Content Include="templates\users_add.html" />
     <Content Include="templates\users_edit.html" />
     <Content Include="templates\users_list.html" />
     <Content Include="templates\users_view.html" />
     <Content Include="templates\selected.html" />
-    <Content Include="templates\admin_subjects.html" />
+    <Content Include="templates\admin_selected.html" />
     <Content Include="templates\_layout.html" />
   </ItemGroup>
   <ItemGroup>

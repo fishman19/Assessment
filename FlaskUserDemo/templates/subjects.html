@@ -17,19 +17,19 @@
         <td>{{ row.year_level }}</td>
         <td>{{ row.faculty }}</td>
         <td>{{ row.hof }}</td>
-        {% if session['logged_in'] == True %}
+        {% if session['role'] != 'admin' %}
         <td>
             <a href="/select?id={{ row.id }}">Select</a>
         </td>
         {% endif %}
         {% if session['role'] == 'admin' %}
         <td>
+            <a href="/view_subject?id={{ row.id }}">View</a>
+        </td>
+        <td>
             <a href="/delete_subject?id={{ row.id }}">Delete</a>
         </td>
         {% endif %}
-        <td>
-            <a href="https://www.youtube.com/watch?v=xNIM453_dgg" target="_blank">Trailer</a>
-        </td>
     </tr>
     {% endfor %}
     {% if session['role'] == 'admin' %}

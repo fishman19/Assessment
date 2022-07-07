@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, session, abort, flash, jsonify
 import uuid, os, hashlib, random, pymysql
+from datetime import date, datetime
 app = Flask(__name__)
 
 # Register the setup page and import create_connection()
@@ -9,7 +10,7 @@ app.register_blueprint(setup)
 # Redirects user to login page if trying to access restricted page when not logged in
 @app.before_request
 def restrict():
-    restricted_pages = ['dashboard', 'view_user', 'edit', 'delete', 'selected', 'add_subject']
+    restricted_pages = ['dashboard', 'view_user', 'edit', 'delete', 'selected', 'add_subject', 'delete_selected', 'select']
     if 'logged_in' not in session and request.endpoint in restricted_pages:
         flash("Sorry, you aren't logged in.")
         return redirect('/login')
@@ -128,7 +129,6 @@ def delete():
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
     if session['role'] != 'admin' and str(session['id']) != request.args['id']:
-        flash("Sorry, you don't have permission to edit this user.")
         return redirect('/view?id=' + request.args['id'])
     if request.method == 'POST':
         if request.files['avatar'].filename:
@@ -194,20 +194,44 @@ def subjects():
 # Selects a subject and adds it to a student's selected list
 @app.route('/select')
 def select():
-    with create_connection() as connection:
-        with connection.cursor() as cursor:
-            sql = "INSERT INTO selected (student_id, subject_id) VALUES (%s, %s)"
-            values = (session['id'], request.args['id'])
-            cursor.execute(sql, values)
-            connection.commit()
-    return redirect('/subjects')
+    if session['role'] == 'admin':
+        return abort(404)
+    datenow = datetime.now()
+    duedate = datetime(2022,7,12, 11,59,59)
+    startdate = datetime(2022,7,6)
+    if datenow > duedate or datenow < startdate:
+        flash('The subject selection period has ended. If you need to add a subject, please notify your teacher.')
+        return redirect('/subjects')
+    else:
+        with create_connection() as connection:
+            with connection.cursor() as cursor:
+                sql = """SELECT users.first_name, subjects.name FROM selected
+                         JOIN users ON selected.student_id = users.id
+                         JOIN subjects ON selected.subject_id = subjects.id
+                         WHERE users.id = %s"""
+                values = (session['id'])
+                cursor.execute(sql, values)
+                result = cursor.fetchall()
+                if len(result) < 5:
+                    sql = """INSERT INTO selected (student_id, subject_id) VALUES (%s, %s)"""
+                    values = (session['id'], request.args['id'])
+                    try:
+                        cursor.execute(sql, values)
+                        connection.commit()
+                    except pymysql.err.IntegrityError:
+                        flash('You have already chosen this subject.')
+                        return redirect('/subjects')
+                else:
+                    flash('You already have 5 subjects. Edit your profile to remove a subject first.')
+                    return redirect('/subjects')
+        return redirect('/subjects')
 
 # List of subjects that a student has selected
 @app.route('/selected')
 def selected():
     with create_connection() as connection:
         with connection.cursor() as cursor:
-            sql = ("""SELECT users.first_name, users.last_name, subjects.name, subjects.year_level FROM selected
+            sql = ("""SELECT users.first_name, users.last_name, subjects.name, subjects.year_level, subjects.id FROM selected
             JOIN users ON selected.student_id = users.id
             JOIN subjects ON subjects.id = selected.subject_id
             WHERE users.id = %s;""")
@@ -232,7 +256,7 @@ def delete_subject():
 # Removes a subject from a student's list of selected subjects
 @app.route('/delete_selected')
 def delete_selected():
-    if str(session['id']) != request.args['id']:
+    if session['logged_in'] != True:
         return abort(404)
     with create_connection() as connection:
         with connection.cursor() as cursor:
@@ -250,11 +274,12 @@ def add_subject():
     if request.method == 'POST':
         with create_connection() as connection:
                 with connection.cursor() as cursor:
-                    sql = 'INSERT INTO subjects (name, year_level, faculty, HOF) VALUES (%s, %s, %s, %s)'
+                    sql = 'INSERT INTO subjects (name, year_level, faculty, hof) VALUES (%s, %s, %s, %s)'
                     values = (request.form['subject'], request.form['year'], request.form['faculty'], request.form['hof'])
                     cursor.execute(sql, values)
                     result = cursor.fetchone()
-        return redirect('subjects')
+                    connection.commit()
+        return redirect('/subjects')
     return render_template('subjects_add.html')
 
 # List of all students and their selected subjects (admin only)
@@ -269,7 +294,49 @@ def admin_subjects():
             JOIN subjects ON subjects.id = selected.subject_id
             GROUP BY users.id;""")
             result = cursor.fetchall()
-    return render_template('admin_subjects.html', result=result)
+            connection.commit()
+    return render_template('admin_selected.html', result=result)
+ 
+# View list of students who have selected a particular subject
+@app.route('/view_subject')
+def subjects_view():
+    if session['role'] != 'admin':
+        return abort(404)
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            sql = ("""SELECT * FROM selected
+            JOIN users ON selected.student_id = users.id
+            JOIN subjects ON subjects.id = selected.subject_id
+            WHERE subjects.id = %s""")
+            values = (request.args['id'])
+            cursor.execute(sql, values)
+            result = cursor.fetchall()
+            connection.commit()
+            print(result)
+    return render_template('subjects_view.html', result=result)
+
+# Edit information about subjects
+@app.route('/edit_subject', methods=['GET', 'POST'])
+def subjects_edit():
+    if session['role'] != 'admin':
+        return abort(404)
+    if request.method == 'POST':
+        with create_connection() as connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE subjects SET name = %s, year_level = %s, faculty = %s, hof = %s WHERE id = %s"
+                values = (request.form['subject'], request.form['year_level'], request.form['faculty'], request.form['hof'], request.form['id'])
+                cursor.execute(sql, values)
+                connection.commit()
+        if session['role'] == 'admin':
+            return redirect(url_for('subjects'))
+    else:
+        with create_connection() as connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM subjects WHERE id = %s"
+                values = (request.args['id'])
+                cursor.execute(sql, values)
+                result = cursor.fetchone()
+        return render_template('subjects_edit.html', result=result)
 
 if __name__ == '__main__':
     import os
