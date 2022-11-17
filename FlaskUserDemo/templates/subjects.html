@@ -8,7 +8,7 @@
         <th>Name</th>
         <th>Year Level</th>
         <th>Faculty</th>
-        <th>HOF</th>
+        <th>Teacher in Charge</th>
         <th colspan="3">Actions</th>
     </tr>
     {% for row in result %}
@@ -16,7 +16,7 @@
         <td>{{ row.name }}</td>
         <td>{{ row.year_level }}</td>
         <td>{{ row.faculty }}</td>
-        <td>{{ row.hof }}</td>
+        <td>{{ row.teacher_in_charge }}</td>
         {% if session['role'] != 'admin' %}
         <td>
             <a href="/select?id={{ row.id }}">Select</a>
@@ -27,7 +27,7 @@
             <a href="/view_subject?id={{ row.id }}">View</a>
         </td>
         <td>
-            <a href="/delete_subject?id={{ row.id }}">Delete</a>
+            <a href="/delete_subject?id={{ row.id }}" onclick="return confirm('Are you sure you want to delete this subject?')">Delete</a>
         </td>
         {% endif %}
     </tr>
@@ -46,5 +46,5 @@
 <a href="/selected">Subjects Selected</a>
 {% endif %}
 <br>
-<a href="/">Return to home</a>
+<a href="/">Return to Home</a>
 {% endblock %}

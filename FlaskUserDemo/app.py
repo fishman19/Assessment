@@ -197,7 +197,7 @@ def select():
     if session['role'] == 'admin':
         return abort(404)
     datenow = datetime.now()
-    duedate = datetime(2022,7,12, 11,59,59)
+    duedate = datetime(2023,7,12, 11,59,59)
     startdate = datetime(2022,7,6)
     if datenow > duedate or datenow < startdate:
         flash('The subject selection period has ended. If you need to add a subject, please notify your teacher.')
@@ -274,8 +274,8 @@ def add_subject():
     if request.method == 'POST':
         with create_connection() as connection:
                 with connection.cursor() as cursor:
-                    sql = 'INSERT INTO subjects (name, year_level, faculty, hof) VALUES (%s, %s, %s, %s)'
-                    values = (request.form['subject'], request.form['year'], request.form['faculty'], request.form['hof'])
+                    sql = 'INSERT INTO subjects (name, year_level, faculty, teacher_in_charge) VALUES (%s, %s, %s, %s)'
+                    values = (request.form['subject'], request.form['year'], request.form['faculty'], request.form['teacher'])
                     cursor.execute(sql, values)
                     result = cursor.fetchone()
                     connection.commit()
@@ -323,8 +323,8 @@ def subjects_edit():
     if request.method == 'POST':
         with create_connection() as connection:
             with connection.cursor() as cursor:
-                sql = "UPDATE subjects SET name = %s, year_level = %s, faculty = %s, hof = %s WHERE id = %s"
-                values = (request.form['subject'], request.form['year_level'], request.form['faculty'], request.form['hof'], request.form['id'])
+                sql = "UPDATE subjects SET name = %s, year_level = %s, faculty = %s, teacher_in_charge = %s WHERE id = %s"
+                values = (request.form['subject'], request.form['year_level'], request.form['faculty'], request.form['teacher'], request.form['id'])
                 cursor.execute(sql, values)
                 connection.commit()
         if session['role'] == 'admin':

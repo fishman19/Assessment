@@ -3,17 +3,21 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>SEND WORD FAR AND WIDE. OF THE LAST QUEEN OF CARIA.</h1>
-<br>
-<a href="/subjects">Subject Selection</a>
+<div id="home">
+<h1>SUBJECT SELECTION</h1>
 <br>
 {% if session['role'] == 'admin' %}
-<a href="{{ url_for('dashboard') }}">View All Users</a>
+<a href="/subjects">All Subjects</a>
 <br>
-<a href="/admin_subjects">learn their secrets</a>
+<a href="{{ url_for('dashboard') }}">All Users</a>
+<br>
+<a href="/admin_subjects">Student Selections</a>
 {% elif 'logged_in' in session %}
 <a href="/view?id={{ session['id'] }}">View Profile</a>
 <br>
 <a href="/selected">Subjects Selected</a>
+{% else %}
+<a href="/subjects">Select Your Subjects</a>
+</div>
 {% endif %}
 {% endblock %}

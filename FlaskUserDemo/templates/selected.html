@@ -8,8 +8,9 @@
     Hey! You have not selected any subjects yet. Click <a href="/subjects">here</a> to find the list of subjects.
     {% else %}
     <tr>
-        <th colspan="2">Subject</th>
+        <th>Subject</th>
         <th>Year Level</th>
+        <th>Actions</th>
     </tr>
     {% for row in result %}
     <tr>
@@ -17,10 +18,10 @@
             {{ row.name }}
         </td>
         <td>
-            <a href="/delete_selected?id={{ row.id }}">Delete</a>
+            {{ row.year_level }}
         </td>
         <td>
-            {{ row.year_level }}
+            <a href="/delete_selected?id={{ row.id }}" onclick="return confirm('Are you sure you want to delete this subject?')">Delete</a>
         </td>
     </tr>
     {% endfor %}
@@ -30,5 +31,5 @@
 <a href="/subjects">Subject Selection</a>
 {% endif %}
 <br>
-<a href="/">Return to home</a>
+<a href="/">Return to Home</a>
 {% endblock %}

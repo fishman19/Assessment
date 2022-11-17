@@ -18,14 +18,16 @@
         <td>
             <a href="/view?id={{ row.id }}">View</a>
             <a href="/edit?id={{ row.id }}">Edit</a>
-            <a href="/delete?id={{ row.id }}">Delete</a>
+            <a href="/delete?id={{ row.id }}" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
         </td>
     </tr>
     {% endfor %}
 </table>
-<a href="{{ url_for('add_user') }}">Add a new user</a>
+<a href="{{ url_for('add_user') }}">Add a New User</a>
 <br>
-<a href="/subjects">List of Subjects</a>
+<a href="/subjects">All Subjects</a>
 <br>
-<a href="/admin_subjects">Student Subject Selections</a>
+<a href="/admin_subjects">Student Selections</a>
+<br>
+<a href="/">Return to Home</a>
 {% endblock %}
